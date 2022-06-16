@@ -33,26 +33,16 @@ try:
     password=MYSQL_DB_PASS,
     database=MYSQL_DB_NAME,
     auth_plugin='mysql_native_password') 
-
-    # args = (SQLSV_DB_HOST, SQLSV_DB_NAME, SQLSV_DB_USER, SQLSV_DB_PASS)
-
-    # driverSettings = '''"Driver={SQL Server};"''' + '''
-    #     "Server={0};"
-    #     "Database={1};"
-    #     "UID={2};"
-    #     "PWD={3};"
-    #     "Trusted_Connection=no;"
-    # '''.format(*args)   
         
-    # print(driverSettings)
-    # input("\x1b[1;31m"+"Presiona ENTER para continuar...")    
+    sqlServerDB = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL server}; SERVER=' + SQLSV_DB_HOST + ';DATABASE=' + SQLSV_DB_NAME + '; UID=' + SQLSV_DB_USER + '; PWD=' + SQLSV_DB_PASS
+    )
+    input("\x1b[1;31m"+"Presiona ENTER para continuar...")    
         
-    # sqlServerDB = pyodbc.connect(driverSettings)
     
     
 except Exception:
     traceback.print_exc()
-    print(driverSettings)
     input("\x1b[1;31m"+"Presiona ENTER para continuar...")
 
 class CLI():
