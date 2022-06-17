@@ -18,11 +18,10 @@ MYSQL_DB_PASS = os.environ['MYSQL_DB_PASS']
 MYSQL_DB_NAME = os.environ['MYSQL_DB_NAME']
 
 # SQL Server en var
-# SQLSV_DB_HOST = os.environ['SQLSV_DB_HOST']
-# SQLSV_DB_USER = os.environ['SQLSV_DB_USER']
-# SQLSV_DB_PASS = os.environ['SQLSV_DB_PASS']
-# SQLSV_DB_NAME = os.environ['SQLSV_DB_NAME']
-# SQLSV_SV_NAME = os.environ['SQLSV_SV_NAME']
+SQLSV_DB_HOST = os.environ['SQLSV_DB_HOST']
+SQLSV_DB_USER = os.environ['SQLSV_DB_USER']
+SQLSV_DB_PASS = os.environ['SQLSV_DB_PASS']
+SQLSV_DB_NAME = os.environ['SQLSV_DB_NAME']
 
 # DBs conn
 myDB = None
