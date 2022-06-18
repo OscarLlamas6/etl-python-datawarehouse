@@ -36,9 +36,7 @@ try:
     database=MYSQL_DB_NAME,
     auth_plugin='mysql_native_password') 
         
-    # sqlServerDB = pyodbc.connect(
-    #     'DRIVER={ODBC Driver 17 for SQL server}; SERVER=' + SQLSV_DB_HOST + ';DATABASE=' + SQLSV_DB_NAME + '; UID=' + SQLSV_DB_USER + '; PWD=' + SQLSV_DB_PASS
-    # )
+    sqlServerDB = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+SQLSV_DB_HOST+';DATABASE='+SQLSV_DB_NAME+';UID='+SQLSV_DB_USER+';PWD='+ SQLSV_DB_PASS)
     input("\x1b[1;31m"+"Presiona ENTER para continuar...")    
         
     
@@ -129,36 +127,67 @@ def extractData():
         df = df.fillna(value=0)
 
         cursor = myDB.cursor()
+        cursorSqlServer = sqlServerDB.cursor()
 
-        #Borrando tabla temporal para pib
-        print('BORRANDO TEMPORAL PIB')
+        #Borrando tabla temporal para pib MYSQL
+        print('BORRANDO TEMPORAL PIB MYSQL')
         cursor.execute(DROP_TEMPORAL_PIB, ())
 
-        #Creando tabla temporal para pib
-        print('CREANDO TEMPORAL PIB')
+        #Borrando tabla temporal para pib SQLSERVER
+        print('BORRANDO TEMPORAL PIB SQLSERVER')
+        cursorSqlServer.execute(DROP_TEMPORAL_PIB)
+
+        #Creando tabla temporal para pib MYSQL
+        print('CREANDO TEMPORAL PIB MYSQL')
         cursor.execute(CREATE_TEMPORAL_PIB, ())
+
+        #Creando tabla temporal para pib SQLSERVER
+        print('CREANDO TEMPORAL PIB SQLSERVER')
+        cursorSqlServer.execute(CREATE_TEMPORAL_PIB)
         
         # Iterando sobre cada registro del csv 
         for row in df.itertuples(index=False):        
             print(row[0])
-            cursor.execute(LLENADO_TEMPORAL_PIB,
-            (
-            row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9],
-            row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19],
-            row[20], row[21], row[22], row[23], row[24], row[25], row[26], row[27], row[28], row[29],
-            row[30], row[31], row[32], row[33], row[34], row[35], row[36], row[37], row[38], row[39],
-            row[40], row[41], row[42], row[43], row[44], row[45], row[46], row[47], row[48], row[49],
-            row[50], row[51], row[52], row[53], row[54], row[55], row[56], row[57], row[58], row[59],
-            row[60], row[61], row[62], row[63], row[64], row[65]
-            ))
 
-        #Borrando tabla temporal de inflacion
-        print('BORRANDO TEMPORAL INFLACION')
+            if row[0] != 0 :
+
+                cursor.execute(LLENADO_TEMPORAL_PIB,
+                (
+                row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9],
+                row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19],
+                row[20], row[21], row[22], row[23], row[24], row[25], row[26], row[27], row[28], row[29],
+                row[30], row[31], row[32], row[33], row[34], row[35], row[36], row[37], row[38], row[39],
+                row[40], row[41], row[42], row[43], row[44], row[45], row[46], row[47], row[48], row[49],
+                row[50], row[51], row[52], row[53], row[54], row[55], row[56], row[57], row[58], row[59],
+                row[60], row[61], row[62], row[63], row[64], row[65]
+                ))
+
+                cursorSqlServer.execute(LLENADO_TEMPORAL_PIB_SQLSERVER,
+                (
+                row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9],
+                row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19],
+                row[20], row[21], row[22], row[23], row[24], row[25], row[26], row[27], row[28], row[29],
+                row[30], row[31], row[32], row[33], row[34], row[35], row[36], row[37], row[38], row[39],
+                row[40], row[41], row[42], row[43], row[44], row[45], row[46], row[47], row[48], row[49],
+                row[50], row[51], row[52], row[53], row[54], row[55], row[56], row[57], row[58], row[59],
+                row[60], row[61], row[62], row[63], row[64], row[65]
+                ))
+
+        #Borrando tabla temporal de inflacion MYSQL
+        print('BORRANDO TEMPORAL INFLACION MYSQL')
         cursor.execute(DROP_TEMPORAL_INFLACION, ())
 
-        #Creando tabla temporal para inflacion
-        print('CREANDO TEMPORAL INFLACION')
+        #Borrando tabla temporal de inflacion SQLSERVER
+        print('BORRANDO TEMPORAL INFLACION SQLSERVER')
+        cursorSqlServer.execute(DROP_TEMPORAL_INFLACION, ())
+
+        #Creando tabla temporal para inflacion MYSQL
+        print('CREANDO TEMPORAL INFLACION MYSQL')
         cursor.execute(CREATE_TEMPORAL_INFLACION, ())
+
+        #Creando tabla temporal para inflacion SQLSERVER
+        print('CREANDO TEMPORAL INFLACION SQLSERVER')
+        cursorSqlServer.execute(CREATE_TEMPORAL_INFLACION, ())
 
         # Extrayendo info de inflacion.csv
         csvData = pandas.read_csv(r'data/inflacion.csv')
@@ -167,18 +196,32 @@ def extractData():
         # Iterando sobre cada registro del csv 
         for row in df.itertuples(index=False):        
             print(row[0])
-            cursor.execute(LLENADO_TEMPORAL_INFLACION,
-            (
-            row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9],
-            row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19],
-            row[20], row[21], row[22], row[23], row[24], row[25], row[26], row[27], row[28], row[29],
-            row[30], row[31], row[32], row[33], row[34], row[35], row[36], row[37], row[38], row[39],
-            row[40], row[41], row[42], row[43], row[44], row[45], row[46], row[47], row[48], row[49],
-            row[50], row[51], row[52], row[53], row[54], row[55], row[56], row[57], row[58], row[59],
-            row[60], row[61], row[62], row[63], row[64], row[65]
-            ))
+            if row[0] != 0 :
+                cursor.execute(LLENADO_TEMPORAL_INFLACION,
+                (
+                row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9],
+                row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19],
+                row[20], row[21], row[22], row[23], row[24], row[25], row[26], row[27], row[28], row[29],
+                row[30], row[31], row[32], row[33], row[34], row[35], row[36], row[37], row[38], row[39],
+                row[40], row[41], row[42], row[43], row[44], row[45], row[46], row[47], row[48], row[49],
+                row[50], row[51], row[52], row[53], row[54], row[55], row[56], row[57], row[58], row[59],
+                row[60], row[61], row[62], row[63], row[64], row[65]
+                ))
+
+                cursorSqlServer.execute(LLENADO_TEMPORAL_INFLACION_SQLSERVER,
+                (
+                row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9],
+                row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19],
+                row[20], row[21], row[22], row[23], row[24], row[25], row[26], row[27], row[28], row[29],
+                row[30], row[31], row[32], row[33], row[34], row[35], row[36], row[37], row[38], row[39],
+                row[40], row[41], row[42], row[43], row[44], row[45], row[46], row[47], row[48], row[49],
+                row[50], row[51], row[52], row[53], row[54], row[55], row[56], row[57], row[58], row[59],
+                row[60], row[61], row[62], row[63], row[64], row[65]
+                ))
         
         myDB.commit()
+        cursorSqlServer.commit()
+        sqlServerDB.commit()
         cursor.close()
         print("\x1b[1;33m"+"SE HAN CARGADO LOS DATOS EXITOSAMENTE :D")
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
