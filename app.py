@@ -4,6 +4,7 @@ import traceback
 import pandas
 import os
 import pyodbc 
+from datetime import datetime
 
 from createTables import *
 from fillTables import *
@@ -29,18 +30,35 @@ sqlServerDB = None
 driverSettings = None
 
 try:
+    # Setting MySQL conn
     myDB = mysql.connector.connect(
     host=MYSQL_DB_HOST,
     user=MYSQL_DB_USER,
     password=MYSQL_DB_PASS,
     database=MYSQL_DB_NAME,
     auth_plugin='mysql_native_password') 
-        
-    sqlServerDB = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+SQLSV_DB_HOST+';DATABASE='+SQLSV_DB_NAME+';UID='+SQLSV_DB_USER+';PWD='+ SQLSV_DB_PASS)
-    input("\x1b[1;31m"+"Presiona ENTER para continuar...")    
-        
     
+    # Setting MSSQVSV conn  
+    sqlServerDB = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+SQLSV_DB_HOST+';DATABASE='+SQLSV_DB_NAME+';UID='+SQLSV_DB_USER+';PWD='+ SQLSV_DB_PASS, autocommit=True)
+    cursorSqlServer = sqlServerDB.cursor()
+    cursorSqlServer.execute('USE [master]')
+    cursorSqlServer.execute('''IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'PROYECTO1')
+                                BEGIN
+                                    CREATE DATABASE [PROYECTO1]
+                                END''')
+    cursorSqlServer.execute('USE [PROYECTO1]')
+    cursorSqlServer.execute('''IF (NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'PROYECTO1')) 
+                                BEGIN
+                                    EXEC ('CREATE SCHEMA PROYECTO1')
+                                END''')
+    cursorSqlServer.close()
     
+    # Setting logs file
+    myFile = open("logs.txt", "w")
+    print("------------ LOGS PROYECTO 1 FASE 1 | SEMI2-GRUPO1 ------------", file=myFile)
+    print(file=myFile)
+    myFile.close()
+       
 except Exception:
     traceback.print_exc()
     input("\x1b[1;31m"+"Presiona ENTER para continuar...")
@@ -75,10 +93,8 @@ def selectQuery():
                 
 def menu():
     print("\x1b[1;34m"+"\n---------------------------- ELIGE UNA OPCION ----------------------------")
-    print("\x1b[1;32m"+"1) EXTRAER INFORMACION")
-    print("\x1b[1;33m"+"2) TRANSFORMAR INFORMACION")
-    print("\x1b[1;35m"+"3) CARGAR INFORMACION A DBMS")
-    print("\x1b[1;31m"+"4) CREAR MODELO")
+    print("\x1b[1;32m"+"1) INICIAR ETL")
+    print("\x1b[1;31m"+"2) CREAR MODELO")
     print("\x1b[1;36m"+"5) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
@@ -120,14 +136,19 @@ def dropModel():
 
 def extractData():
     try:
-        print("\x1b[1;34m"+"\n------------------------- EXTRAYENDO INFORMACION -------------------------")
-        # Extrayendo info de pib.csv
+        print("\x1b[1;33m"+"\n------------------------- ETL INFORMACION -------------------------")
+        # Extrayendo info de pib.csv         
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Extrayendo informacion pib.csv", file=myFile) 
         csvData = pandas.read_csv(r'data/pib.csv')
         df = pandas.DataFrame(csvData)
         df = df.fillna(value=0)
 
         cursor = myDB.cursor()
         cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('USE [PROYECTO1]')
 
         #Borrando tabla temporal para pib MYSQL
         print('BORRANDO TEMPORAL PIB MYSQL')
@@ -135,19 +156,28 @@ def extractData():
 
         #Borrando tabla temporal para pib SQLSERVER
         print('BORRANDO TEMPORAL PIB SQLSERVER')
-        cursorSqlServer.execute(DROP_TEMPORAL_PIB)
+        cursorSqlServer.execute(DROP_TEMPORAL_PIB_MSSQL)
 
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Creando tablatemporal temporalPIB", file=myFile)
         #Creando tabla temporal para pib MYSQL
         print('CREANDO TEMPORAL PIB MYSQL')
         cursor.execute(CREATE_TEMPORAL_PIB, ())
 
         #Creando tabla temporal para pib SQLSERVER
         print('CREANDO TEMPORAL PIB SQLSERVER')
-        cursorSqlServer.execute(CREATE_TEMPORAL_PIB)
+        cursorSqlServer.execute(CREATE_TEMPORAL_PIB_MSSQL)
         
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Transformando informacion pib.csv", file=myFile)
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Cargando informacion pib.csv", file=myFile)
         # Iterando sobre cada registro del csv 
         for row in df.itertuples(index=False):        
-            print(row[0])
+            #print(row[0])
 
             if row[0] != 0 :
 
@@ -179,23 +209,35 @@ def extractData():
 
         #Borrando tabla temporal de inflacion SQLSERVER
         print('BORRANDO TEMPORAL INFLACION SQLSERVER')
-        cursorSqlServer.execute(DROP_TEMPORAL_INFLACION, ())
+        cursorSqlServer.execute(DROP_TEMPORAL_INFLACION_MSSQL, ())
 
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Creando tablatemporal temporalInflacion", file=myFile)
         #Creando tabla temporal para inflacion MYSQL
         print('CREANDO TEMPORAL INFLACION MYSQL')
         cursor.execute(CREATE_TEMPORAL_INFLACION, ())
 
         #Creando tabla temporal para inflacion SQLSERVER
         print('CREANDO TEMPORAL INFLACION SQLSERVER')
-        cursorSqlServer.execute(CREATE_TEMPORAL_INFLACION, ())
+        cursorSqlServer.execute(CREATE_TEMPORAL_INFLACION_MSSQL, ())
 
         # Extrayendo info de inflacion.csv
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Extrayendo informacion inflacion.csv", file=myFile)
         csvData = pandas.read_csv(r'data/inflacion.csv')
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Transformando informacion inflacion.csv", file=myFile)
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Cargando informacion inflacion.csv", file=myFile)
         df = pandas.DataFrame(csvData)
         df = df.fillna(value=0)
         # Iterando sobre cada registro del csv 
         for row in df.itertuples(index=False):        
-            print(row[0])
+            #print(row[0])
             if row[0] != 0 :
                 cursor.execute(LLENADO_TEMPORAL_INFLACION,
                 (
@@ -223,7 +265,8 @@ def extractData():
         cursorSqlServer.commit()
         sqlServerDB.commit()
         cursor.close()
-        print("\x1b[1;33m"+"SE HAN CARGADO LOS DATOS EXITOSAMENTE :D")
+        myFile.close()
+        print("\x1b[1;33m"+"ETL TERMINADO EXITOSAMENTE :D")
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     except Exception as e: 
         print(e)

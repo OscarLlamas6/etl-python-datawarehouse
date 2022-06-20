@@ -76,7 +76,7 @@ LLENADO_TEMPORAL_PIB = ('INSERT INTO temporalPib ('
                          ');'
 						)
 
-LLENADO_TEMPORAL_PIB_SQLSERVER = ('INSERT INTO temporalPib ('
+LLENADO_TEMPORAL_PIB_SQLSERVER = ('INSERT INTO [PROYECTO1].temporalPib ('
 						'countryName,'
 						'countryCode,'
 						'indicatorName,'
@@ -232,7 +232,7 @@ LLENADO_TEMPORAL_INFLACION = ('INSERT INTO temporalInflacion ('
                          ');'
 						)
 
-LLENADO_TEMPORAL_INFLACION_SQLSERVER = ('INSERT INTO temporalInflacion ('
+LLENADO_TEMPORAL_INFLACION_SQLSERVER = ('INSERT INTO [PROYECTO1].temporalInflacion ('
 						'countryName,'
 						'countryCode,'
 						'indicatorName,'

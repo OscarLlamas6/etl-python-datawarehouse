@@ -1,21 +1,32 @@
-create database data_pib;
-use data_pib;
+USE [master]
 
-create table indicador(
+IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'PROYECTO1')
+BEGIN
+    CREATE DATABASE [PROYECTO1]
+END
+
+USE [PROYECTO1]
+
+IF (NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'PROYECTO1')) 
+BEGIN
+    EXEC ('CREATE SCHEMA [PROYECTO1]')
+END
+
+create table [PROYECTO1].indicador(
     id_indicador int not null identity(1,1),
     indicador varchar(60),
     codigo_indicador varchar(60),
     constraint pk_indicador primary key(id_indicador)
 );
 
-create table pais(
+create table [PROYECTO1].pais(
     id_pais int not null identity(1,1),
     pais varchar(60),
     codigo_pais varchar(60),
     constraint pk_pais primary key (id_pais)
 );
 
-create table indicador_pais(
+create table [PROYECTO1].indicador_pais(
     cod_pais int not null,
     cod_indicador int not null,
     year_field int not null,
