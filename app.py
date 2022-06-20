@@ -5,6 +5,8 @@ import pandas
 import os
 import pyodbc 
 from datetime import datetime
+from halo import Halo
+import time
 
 from createTables import *
 from fillTables import *
@@ -65,18 +67,24 @@ except Exception:
 
 class CLI():
     
-    def __init__(self):    
-        while(True):
-            os.system('cls||clear')
-            print("\x1b[1;31m"+"------------------ SEMINARIO DE SISTEMAS 2: PROYECTO 1 -----------------")
-            print("\x1b[1;36m"+"-------------------------------- GRUPO 1 --------------------------------")
-            menu()        
-            keyInput = input("\x1b[1;37m"+"")    
-            if keyInput == "1":
-                extractData()
-            if keyInput == "5" or keyInput.lower() == "exit":
-                print("\x1b[1;31m"+"\nHASTA LA PROXIMA :D")
-                exit()
+    def __init__(self):
+        try:
+            while(True):
+                os.system('cls||clear')
+                print("\x1b[1;31m"+"------------------ SEMINARIO DE SISTEMAS 2: PROYECTO 1 -----------------")
+                print("\x1b[1;36m"+"-------------------------------- GRUPO 1 --------------------------------")
+                menu()        
+                keyInput = input("\x1b[1;37m"+"")    
+                if keyInput == "1":
+                    extractData()
+                if keyInput == "2":
+                    createModel()
+                if keyInput == "5" or keyInput.lower() == "exit":
+                    print("\x1b[1;31m"+"\nHASTA LA PROXIMA :D")
+                    break
+        except Exception as Ex:
+            print(Ex)
+        
 
 def selectQuery():
     while(True):
@@ -116,11 +124,61 @@ def queriesMenu():
     print("\x1b[1;33m"+"> ", end='')
 
 def createModel():
+    #spinner = Halo(text='Creando modelo...', spinner='dots')
     try:
+        #spinner.start()
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('USE [master]')
+        cursorSqlServer.execute('''IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'PROYECTO1')
+                                BEGIN
+                                    CREATE DATABASE [PROYECTO1]
+                                END''')
+        cursorSqlServer.execute('USE [PROYECTO1]')
+        cursorSqlServer.execute('''IF (NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'PROYECTO1')) 
+                                BEGIN
+                                    EXEC ('CREATE SCHEMA PROYECTO1')
+                                END''')
+        cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].indicadorpais')
+        cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].indicador')
+        cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].pais')
+        cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].fecha')
+        cursorSqlServer.execute('''CREATE TABLE  [PROYECTO1].indicador(
+                                    id_indicador int not null identity(1,1),
+                                    indicador varchar(60),
+                                    codigo_indicador varchar(60),
+                                    constraint pk_indicador primary key(id_indicador)
+                                )''')
+        cursorSqlServer.execute('''CREATE TABLE [PROYECTO1].pais(
+                                    id_pais int not null identity(1,1),
+                                    pais varchar(60),
+                                    codigo_pais varchar(60),
+                                    constraint pk_pais primary key (id_pais)
+                                )''')
+        cursorSqlServer.execute('''CREATE TABLE [PROYECTO1].fecha(
+                                    id_fecha int not null identity(1,1),
+                                    year_field int not null,
+                                    constraint pk_fecha primary key (id_fecha)
+                                )''')
+        cursorSqlServer.execute('''CREATE TABLE [PROYECTO1].indicadorpais(
+                                    id_indicadorPais int not null identity(1,1),
+                                    id_pais int not null,
+                                    id_indicador int not null,
+                                    id_fecha int not null,
+                                    valor float,
+                                    constraint pk_indicadorpais primary key (id_indicadorPais),
+                                    constraint fk_indicadorpais_pais foreign key (id_pais) references [PROYECTO1].pais(id_pais),
+                                    constraint fk_indicadorpais_indicador foreign key (id_indicador) references [PROYECTO1].indicador(id_indicador),
+                                    constraint fk_indicadorpais_fecha foreign key (id_fecha) references [PROYECTO1].fecha(id_fecha)
+                                )''')
+        cursorSqlServer.close()
+        #time.sleep(3)
+        #spinner.succeed()
+        #spinner.stop_and_persist(symbol='👽'.encode('utf-8'), text="Modelo creado correctamente :D")
         print("\x1b[1;33m"+'Modelo creado :D')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
-    except Exception as e: 
+    except Exception as e:
         print(e)
+        #spinner.stop()
         print('Error al crear modelo :o')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     
