@@ -10,6 +10,7 @@ import time
 
 from createTables import *
 from fillTables import *
+from crearDataMarts import *
 
 # Setting env variables
 load_dotenv()
@@ -334,7 +335,7 @@ def loadData():
 def dropDatamarts():
     try:
         cursorSqlServer = sqlServerDB.cursor()
-        cursorSqlServer.execute('USE [master]')
+        cursorSqlServer.execute('USE [PROYECTO1]')
 
         # Ahora se corren todos los scripts para borar el datamart  
         # y sus tablas inflacion, impacto_mundia y combinado
@@ -344,7 +345,7 @@ def dropDatamarts():
         for query in SCRIPTS_DROP_DATAMART_COMBINADO:
             cursorSqlServer.execute(query)
 
-        for query in SCRIPTS_DATAMART_IMPACTO:
+        for query in SCRIPTS_DROP_DATAMART_IMPACTO:
             cursorSqlServer.execute(query)
 
         for query in SCRIPTS_DROP_DATAMART_INFLACION:
