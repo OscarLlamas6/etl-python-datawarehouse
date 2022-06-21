@@ -94,7 +94,7 @@ insert into estado_pais_comb(cod_pais, cod_anio, medida_pib,medida_inflacion) (
         where [PROYECTO1].indicador.id_indicador = [PROYECTO1].indicadorpais.id_indicador
         and [PROYECTO1].pais.id_pais = [PROYECTO1].indicadorpais.id_pais
         and [PROYECTO1].fecha.id_fecha = [PROYECTO1].indicadorpais.id_fecha
-        and [PROYECTO1].indicador.indicador = 'Crecimiento del PIB (% anual)'
+        and [PROYECTO1].indicador.indicador like 'Crecimiento del PIB%'
     ) as tmp1,
     (
         select indicador as ind1, pais as ps1, year_field as fch1, valor as vl1
@@ -103,13 +103,12 @@ insert into estado_pais_comb(cod_pais, cod_anio, medida_pib,medida_inflacion) (
         where [PROYECTO1].indicador.id_indicador = [PROYECTO1].indicadorpais.id_indicador
         and [PROYECTO1].pais.id_pais = [PROYECTO1].indicadorpais.id_pais
         and [PROYECTO1].fecha.id_fecha = [PROYECTO1].indicadorpais.id_fecha
-        and [PROYECTO1].indicador.indicador = 'Inflación, precios al consumidor (% anual)'
+        and [PROYECTO1].indicador.indicador like 'Inflación, precios al consumidor%'
     ) as tmp2
     where pais_comb.pais = ps
     and pais_comb.pais = ps1
     and anio = fch
     and anio = fch1
-    and ind = ind1
     and ps = ps1
     and fch = fch1
 );
