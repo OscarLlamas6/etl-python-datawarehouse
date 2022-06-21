@@ -13,7 +13,6 @@ CREAR_TABLA_PAIS_INF = ("""
 CREATE TABLE pais_inf(
     id_pais int not null identity(1,1),
     pais varchar(300),
-    codigo_pais varchar(300),
     constraint pk_pais_inf primary key (id_pais)
 );
 """)
@@ -65,7 +64,6 @@ CREAR_TABLA_PAIS_IM = ("""
 CREATE TABLE pais_im(
     id_pais int not null identity(1,1),
     pais varchar(300),
-    codigo_pais varchar(300),
     constraint pk_pais_im primary key (id_pais)
 );
 """)
@@ -117,7 +115,6 @@ CREAR_TABLA_PAIS_COMB = ("""
 CREATE TABLE pais_comb(
     id_pais int not null identity(1,1),
     pais varchar(300),
-    codigo_pais varchar(300),
     constraint pk_pais_comb primary key (id_pais)
 );
 """)
