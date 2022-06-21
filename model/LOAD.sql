@@ -1,3 +1,4 @@
+USE [master]
 USE [PROYECTO1]
 
 /* LLENAR TABLA PAIS */
