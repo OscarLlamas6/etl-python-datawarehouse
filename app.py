@@ -118,7 +118,7 @@ def menu():
     print("\x1b[1;33m"+"3) CARGAR INFORMACION")
     print("\x1b[1;33m"+"4) CONSULTAS")
     print("\x1b[1;35m"+"5) CREAR DATAMARTS")
-    print("\x1b[1;35m"+"7) CARGAR DATAMARTS")
+    print("\x1b[1;35m"+"6) CARGAR DATAMARTS")
     print("\x1b[1;36m"+"7) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
