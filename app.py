@@ -11,6 +11,7 @@ import time
 from createTables import *
 from fillTables import *
 from crearDataMarts import *
+from cargarDatamarts import *
 
 # Setting env variables
 load_dotenv()
@@ -87,7 +88,9 @@ class CLI():
                 if keyInput == "5":
                     dropDatamarts()
                     crearDatamarts()
-                if keyInput == "6" or keyInput.lower() == "exit":
+                if keyInput == "6":
+                    cargarDatamartsNuevos()
+                if keyInput == "7" or keyInput.lower() == "exit":
                     print("\x1b[1;31m"+"\nHASTA LA PROXIMA :D")
                     break
         except Exception as Ex:
@@ -115,7 +118,8 @@ def menu():
     print("\x1b[1;33m"+"3) CARGAR INFORMACION")
     print("\x1b[1;33m"+"4) CONSULTAS")
     print("\x1b[1;35m"+"5) CREAR DATAMARTS")
-    print("\x1b[1;36m"+"6) SALIR\n")
+    print("\x1b[1;35m"+"6) CARGAR DATAMARTS")
+    print("\x1b[1;36m"+"7) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
     
@@ -243,6 +247,42 @@ def crearDatamarts():
         print('Error al crear datamarts :o')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
   
+def cargarDatamartsNuevos():
+    try:
+        cursorSqlServer = sqlServerDB.cursor()
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Cargando datos en Datamarts...", file=myFile)
+
+        cursorSqlServer.execute('USE [PROYECTO1]')
+
+        for query in SCRIPTS_CARGA_DM_INFLACION:
+            cursorSqlServer.execute(query)
+        
+        print(date_time + " - Datos de Datamart: Inflacion, cargados con exito", file=myFile)
+
+        for query in SCRIPTS_CARGA_DM_IMPACTO:
+            cursorSqlServer.execute(query)
+
+        print(date_time + " - Datos de Datamart: Impacto_Mundial, cargados con exito", file=myFile)
+        
+        for query in SCRIPTS_CARGA_DM_COMBINADO:
+            cursorSqlServer.execute(query)
+
+        print(date_time + " - Datos de Datamart: Combinado, cargados con exito", file=myFile)
+        print(date_time + " - Datamarts cargados con exito!", file=myFile)
+
+        myFile.close()
+        cursorSqlServer.close()
+        print("\x1b[1;33m"+'Datamarts cargados con exito :D')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e:
+        print(e)
+        #spinner.stop()
+        print('Error al crear datamarts :o')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
 def loadData():
     try:
         print("\x1b[1;34m"+"\n------------------------- CARGANDO INFORMACION -------------------------")
