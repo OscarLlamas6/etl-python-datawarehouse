@@ -218,6 +218,7 @@ def crearDatamarts():
         # createTAbles.py y se ejecutaran justo en el orden en que fueron agregados
         # en el arreglo mencionado - Sera de igual forma para todos los demas datamarts
 
+        cursorSqlServer.execute('USE [master]')
         cursorSqlServer.execute('USE [PROYECTO1]')
         
         for query in SCRIPTS_DATAMART_INFLACION:
@@ -255,6 +256,7 @@ def cargarDatamartsNuevos():
         date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
         print(date_time + " - Cargando datos en Datamarts...", file=myFile)
 
+        cursorSqlServer.execute('USE [master]')
         cursorSqlServer.execute('USE [PROYECTO1]')
 
         for query in SCRIPTS_CARGA_DM_INFLACION:
@@ -374,6 +376,10 @@ def loadData():
 
 def dropDatamarts():
     try:
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Eliminando Datamarts en MSSQL Server", file=myFile) 
         cursorSqlServer = sqlServerDB.cursor()
         cursorSqlServer.execute('USE [master]')
         cursorSqlServer.execute('USE [PROYECTO1]')
@@ -392,6 +398,7 @@ def dropDatamarts():
         for query in SCRIPTS_DROP_DATAMART_INFLACION:
             cursorSqlServer.execute(query)
 
+        myFile.close()
         cursorSqlServer.close()
         print("\x1b[1;33m"+'Modelos Datamarts eliminados :(')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
@@ -403,6 +410,10 @@ def dropDatamarts():
 def dropModel():
     try:
         # Droping Schema
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Eliminando modelo en MSSQL Server", file=myFile) 
         cursorSqlServer = sqlServerDB.cursor()
         cursorSqlServer.execute('USE [master]')
         cursorSqlServer.execute('''IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'PROYECTO1')
@@ -419,6 +430,7 @@ def dropModel():
         cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].pais')
         cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].fecha')
         cursorSqlServer.close()
+        myFile.close()
         print("\x1b[1;33m"+'Modelo eliminado :(')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     except Exception as e: 

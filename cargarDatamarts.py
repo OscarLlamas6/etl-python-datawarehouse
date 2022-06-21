@@ -2,21 +2,21 @@
 # =========================================================
 
 CARGAR_TABLA_DM_INFLACION_PAIS = ("""
-insert into pais_inf(pais) (
+insert into [PROYECTO1].pais_inf(pais) (
     select distinct pais from [PROYECTO1].pais
 );
 """)
 
 CARGAR_TABLA_DM_INFLACION_ANIO_REG = ("""
-insert into anio_registrado_inf(anio) (
+insert into [PROYECTO1].anio_registrado_inf(anio) (
     select distinct year_field from [PROYECTO1].fecha
 );
 """)
 
 CARGAR_TABLA_DM_INFLACION_REG_INF = ("""
-insert into registro_inflacionpais_inf(cod_pais, cod_anio, medida_inflacion) (
+insert into [PROYECTO1].registro_inflacionpais_inf(cod_pais, cod_anio, medida_inflacion) (
     select pais_inf.id_pais, id_anio, vl 
-    from pais_inf, anio_registrado_inf, (
+    from [PROYECTO1].pais_inf, [PROYECTO1].anio_registrado_inf, (
         select indicador as ind, pais as ps, year_field as fch, valor as vl
         from [PROYECTO1].indicador, [PROYECTO1].pais,
         [PROYECTO1].fecha, [PROYECTO1].indicadorpais
@@ -36,21 +36,21 @@ SCRIPTS_CARGA_DM_INFLACION = [CARGAR_TABLA_DM_INFLACION_PAIS,CARGAR_TABLA_DM_INF
 # =========================================================
 
 CARGAR_TABLA_DM_IMPACTO_PAIS = ("""
-insert into pais_im(pais) (
+insert into [PROYECTO1].pais_im(pais) (
     select distinct pais from [PROYECTO1].pais
 );
 """)
 
 CARGAR_TABLA_DM_IMPACTO_ANIO = ("""
-insert into anio_registrado_im(anio) (
+insert into [PROYECTO1].anio_registrado_im(anio) (
     select distinct year_field from [PROYECTO1].fecha
 );
 """)
 
 CARGAR_TABLA_DM_IMPACTO_REGISTROPIB = ("""
-insert into registro_pibpais_im(cod_pais, cod_anio, medida_pib) (
+insert into [PROYECTO1].registro_pibpais_im(cod_pais, cod_anio, medida_pib) (
     select pais_im.id_pais, id_anio, vl 
-    from pais_im, anio_registrado_im, (
+    from [PROYECTO1].pais_im, [PROYECTO1].anio_registrado_im, (
         select indicador as ind, pais as ps, year_field as fch, valor as vl
         from [PROYECTO1].indicador, [PROYECTO1].pais,
         [PROYECTO1].fecha, [PROYECTO1].indicadorpais
@@ -71,22 +71,22 @@ SCRIPTS_CARGA_DM_IMPACTO = [CARGAR_TABLA_DM_IMPACTO_PAIS,CARGAR_TABLA_DM_IMPACTO
 # =========================================================
 
 CARGAR_TABLA_DM_COMBINADO_PAIS = ("""
-insert into pais_comb(pais) (
+insert into [PROYECTO1].pais_comb(pais) (
     select distinct pais from [PROYECTO1].pais
 );
 """)
 
 CARGAR_TABLA_DM_COMBINADO_ANIO_REG = ("""
-insert into anio_registrado_comb(anio) (
+insert into [PROYECTO1].anio_registrado_comb(anio) (
     select distinct year_field from [PROYECTO1].fecha
 );
 """)
 
 CARGAR_TABLA_DM_COMBINADO_ = ("""
-insert into estado_pais_comb(cod_pais, cod_anio, medida_pib,medida_inflacion) (
+insert into [PROYECTO1].estado_pais_comb(cod_pais, cod_anio, medida_pib,medida_inflacion) (
     select pais_comb.id_pais, id_anio, vl, vl1
-    from pais_comb, 
-    anio_registrado_comb, 
+    from [PROYECTO1].pais_comb, 
+    [PROYECTO1].anio_registrado_comb, 
     (
         select indicador as ind, pais as ps, year_field as fch, valor as vl
         from [PROYECTO1].indicador, [PROYECTO1].pais,
