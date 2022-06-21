@@ -1,0 +1,32 @@
+USE [PROYECTO1]
+
+/* LLENAR TABLA PAIS */
+INSERT INTO [PROYECTO1].pais (pais, codigo_pais)
+SELECT COUNTRIES.countryName, COUNTRIES.countryCode FROM (
+    SELECT countryName, countryCode FROM [PROYECTO1].temporalInflacion
+    UNION ALL
+    SELECT countryName, countryCode FROM [PROYECTO1].temporalPib
+) AS COUNTRIES
+GROUP BY COUNTRIES.countryName, COUNTRIES.countryCode
+
+/* LLENAR TABLA INDICADOR */
+INSERT INTO [PROYECTO1].indicador (indicador, codigo_indicador)
+SELECT INDICATORS.indicatorName, INDICATORS.indicatorCode FROM (
+    SELECT indicatorName, indicatorCode FROM [PROYECTO1].temporalInflacion
+    UNION ALL
+    SELECT indicatorName, indicatorCode FROM [PROYECTO1].temporalPib
+) AS INDICATORS
+GROUP BY INDICATORS.indicatorName, INDICATORS.indicatorCode
+
+/* LLENAR TABLA FECHA */
+INSERT INTO [PROYECTO1].fecha (year_field)
+SELECT YEARS.YEAR_FIELD FROM  (
+    SELECT  RIGHT(COLUMN_NAME, LEN(COLUMN_NAME) - 1) AS YEAR_FIELD
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'temporalInflacion' AND COLUMN_NAME LIKE 'A%'
+    UNION  ALL
+    SELECT  RIGHT(COLUMN_NAME, LEN(COLUMN_NAME) - 1) AS COLUMN_NAME
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'temporalPib' AND COLUMN_NAME LIKE 'A%'
+) AS YEARS
+GROUP BY YEARS.YEAR_FIELD

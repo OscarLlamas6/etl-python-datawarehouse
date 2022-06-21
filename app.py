@@ -103,6 +103,7 @@ def menu():
     print("\x1b[1;34m"+"\n---------------------------- ELIGE UNA OPCION ----------------------------")
     print("\x1b[1;32m"+"1) INICIAR ETL")
     print("\x1b[1;31m"+"2) CREAR MODELO")
+    print("\x1b[1;33m"+"3) CARGAR INFORMACION")
     print("\x1b[1;36m"+"5) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
@@ -182,9 +183,35 @@ def createModel():
         print('Error al crear modelo :o')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     
+def loadData():
+    try:
+        print("\x1b[1;34m"+"\n------------------------- CARGANDO INFORMACION -------------------------")
+        print("\x1b[1;33m"+"SE HAN CARGADO LOS DATOS EXITOSAMENTE :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al cargar informacion :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    
 def dropModel():
     try:
         # Droping Schema
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('USE [master]')
+        cursorSqlServer.execute('''IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'PROYECTO1')
+                                BEGIN
+                                    CREATE DATABASE [PROYECTO1]
+                                END''')
+        cursorSqlServer.execute('USE [PROYECTO1]')
+        cursorSqlServer.execute('''IF (NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'PROYECTO1')) 
+                                BEGIN
+                                    EXEC ('CREATE SCHEMA PROYECTO1')
+                                END''')
+        cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].indicadorpais')
+        cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].indicador')
+        cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].pais')
+        cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].fecha')
+        cursorSqlServer.close()
         print("\x1b[1;33m"+'Modelo eliminado :(')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     except Exception as e: 
