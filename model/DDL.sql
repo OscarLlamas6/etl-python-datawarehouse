@@ -14,15 +14,15 @@ END
 
 CREATE TABLE  [PROYECTO1].indicador(
     id_indicador int not null identity(1,1),
-    indicador varchar(60),
-    codigo_indicador varchar(60),
+    indicador varchar(300),
+    codigo_indicador varchar(300),
     constraint pk_indicador primary key(id_indicador)
 );
 
 CREATE TABLE [PROYECTO1].pais(
     id_pais int not null identity(1,1),
-    pais varchar(60),
-    codigo_pais varchar(60),
+    pais varchar(300),
+    codigo_pais varchar(300),
     constraint pk_pais primary key (id_pais)
 );
 
