@@ -134,6 +134,10 @@ def createModel():
     #spinner = Halo(text='Creando modelo...', spinner='dots')
     try:
         #spinner.start()
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Creando modelo en MSSQL Server", file=myFile) 
         cursorSqlServer = sqlServerDB.cursor()
         cursorSqlServer.execute('USE [master]')
         cursorSqlServer.execute('''IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'PROYECTO1')
@@ -178,6 +182,7 @@ def createModel():
                                     constraint fk_indicadorpais_fecha foreign key (id_fecha) references [PROYECTO1].fecha(id_fecha)
                                 )''')
         cursorSqlServer.close()
+        myFile.close()
         #time.sleep(3)
         #spinner.succeed()
         #spinner.stop_and_persist(symbol='👽'.encode('utf-8'), text="Modelo creado correctamente :D")
@@ -192,6 +197,10 @@ def createModel():
 def loadData():
     try:
         print("\x1b[1;34m"+"\n------------------------- CARGANDO INFORMACION -------------------------")
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Cargando información a modelo en MSSQL Server", file=myFile) 
         cursorSqlServer = sqlServerDB.cursor()
         cursorSqlServer.execute('USE [master]')
         cursorSqlServer.execute('USE [PROYECTO1]')
@@ -221,6 +230,7 @@ def loadData():
                                 ) AS YEARS
                                 GROUP BY YEARS.YEAR_FIELD''')
         cursorSqlServer.close()
+        myFile.close()
         print("\x1b[1;33m"+"SE HAN CARGADO LOS DATOS EXITOSAMENTE :D")
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     except Exception as e: 
