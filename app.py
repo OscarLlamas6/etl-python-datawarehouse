@@ -83,7 +83,10 @@ class CLI():
                     loadData()
                 if keyInput == "4":
                     selectQuery()
-                if keyInput == "5" or keyInput.lower() == "exit":
+                if keyInput == "5":
+                    dropDatamarts()
+                    crearDatamarts()
+                if keyInput == "6" or keyInput.lower() == "exit":
                     print("\x1b[1;31m"+"\nHASTA LA PROXIMA :D")
                     break
         except Exception as Ex:
@@ -107,8 +110,9 @@ def menu():
     print("\x1b[1;32m"+"1) INICIAR ETL")
     print("\x1b[1;31m"+"2) CREAR MODELO")
     print("\x1b[1;33m"+"3) CARGAR INFORMACION")
-    print("\x1b[1;35m"+"4) CONSULTAS")
-    print("\x1b[1;36m"+"5) SALIR\n")
+    print("\x1b[1;33m"+"4) CONSULTAS")
+    print("\x1b[1;35m"+"5) CREAR DATAMARTS")
+    print("\x1b[1;36m"+"6) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
     
@@ -193,7 +197,49 @@ def createModel():
         #spinner.stop()
         print('Error al crear modelo :o')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
-    
+
+def crearDatamarts():
+    try:
+        cursorSqlServer = sqlServerDB.cursor()
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Creando Datamarts...", file=myFile) 
+        # Ahora se corren todos los scripts para crear el datamart de 
+        # inflacion, impacto_mundia y combinado
+        # estos se encuentran cada uno en un arreglo de strings definido en el archivo
+        # createTAbles.py y se ejecutaran justo en el orden en que fueron agregados
+        # en el arreglo mencionado - Sera de igual forma para todos los demas datamarts
+
+        cursorSqlServer.execute('USE [PROYECTO1]')
+        
+        for query in SCRIPTS_DATAMART_INFLACION:
+            cursorSqlServer.execute(query)
+
+        print(date_time + " - Datamart Inflacion creado exitosamente...", file=myFile) 
+                
+        for query in SCRIPTS_DATAMART_IMPACTO:
+            cursorSqlServer.execute(query)
+
+        print(date_time + " - Datamart Impacto_Mundial creado exitosamente...", file=myFile) 
+        
+        for query in SCRIPTS_DATAMART_COMBINADO:
+            cursorSqlServer.execute(query)
+
+        print(date_time + " - Datamart Combinado creado exitosamente...", file=myFile)
+        print(date_time + " - Datamarts creados con exito!", file=myFile) 
+
+        cursorSqlServer.close()
+        myFile.close()
+        print("\x1b[1;33m"+'Datamarts creados con exito :D')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+        
+    except Exception as e:
+        print(e)
+        #spinner.stop()
+        print('Error al crear datamarts :o')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+  
 def loadData():
     try:
         print("\x1b[1;34m"+"\n------------------------- CARGANDO INFORMACION -------------------------")
@@ -237,7 +283,34 @@ def loadData():
         print(e)
         print('Error al cargar informacion :(')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
-    
+
+def dropDatamarts():
+    try:
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('USE [master]')
+
+        # Ahora se corren todos los scripts para borar el datamart  
+        # y sus tablas inflacion, impacto_mundia y combinado
+        # estos se encuentran cada uno en un arreglo de strings definido en el archivo
+        # createTAbles.py y se ejecutaran justo en el orden en que fueron agregados
+        # en el arreglo mencionado - Sera de igual forma para todos los demas datamarts
+        for query in SCRIPTS_DROP_DATAMART_COMBINADO:
+            cursorSqlServer.execute(query)
+
+        for query in SCRIPTS_DATAMART_IMPACTO:
+            cursorSqlServer.execute(query)
+
+        for query in SCRIPTS_DROP_DATAMART_INFLACION:
+            cursorSqlServer.execute(query)
+
+        cursorSqlServer.close()
+        print("\x1b[1;33m"+'Modelo eliminado :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al cargar informacion :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...") 
+
 def dropModel():
     try:
         # Droping Schema
