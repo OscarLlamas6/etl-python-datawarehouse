@@ -172,9 +172,9 @@ def createModel():
                                 )''')
         cursorSqlServer.execute('''CREATE TABLE [PROYECTO1].indicadorpais(
                                     id_indicadorPais int not null identity(1,1),
-                                    id_pais int not null,
-                                    id_indicador int not null,
-                                    id_fecha int not null,
+                                    id_pais int,
+                                    id_indicador int,
+                                    id_fecha int,
                                     valor float,
                                     constraint pk_indicadorpais primary key (id_indicadorPais),
                                     constraint fk_indicadorpais_pais foreign key (id_pais) references [PROYECTO1].pais(id_pais),
@@ -229,6 +229,51 @@ def loadData():
                                     WHERE TABLE_NAME = 'temporalPib' AND COLUMN_NAME LIKE 'A%'
                                 ) AS YEARS
                                 GROUP BY YEARS.YEAR_FIELD''')
+        for x in range(1960, 2022):
+            cursorSqlServer.execute('''INSERT INTO [PROYECTO1].indicadorpais(id_pais, id_indicador, id_fecha, valor)
+                                select
+                                (
+                                SELECT top 1 id_pais FROM [PROYECTO1].pais as pa
+                                INNER JOIN [PROYECTO1].temporalPib
+                                ON pa.pais = tempPib.countryName
+                                ),
+                                (
+                                SELECT top 1 id_indicador FROM [PROYECTO1].indicador as indi
+                                INNER JOIN [PROYECTO1].temporalPib
+                                ON indi.indicador = tempPib.indicatorName
+                                ),
+                                (
+                                SELECT top 1 id_fecha FROM [PROYECTO1].fecha as fe
+                                INNER JOIN [PROYECTO1].temporalPib
+                                ON fe.year_field like '{x}%'
+                                ),
+                                (
+                                tempPib.A{x}
+                                )
+                                from [PROYECTO1].temporalPib as tempPib'''.format(x=x))
+
+            cursorSqlServer.execute('''INSERT INTO [PROYECTO1].indicadorpais(id_pais, id_indicador, id_fecha, valor)
+                                select
+                                (
+                                SELECT top 1 id_pais FROM [PROYECTO1].pais as pa
+                                INNER JOIN [PROYECTO1].temporalInflacion
+                                ON pa.pais = tempInf.countryName
+                                ),
+                                (
+                                SELECT top 1 id_indicador FROM [PROYECTO1].indicador as indi
+                                INNER JOIN [PROYECTO1].temporalInflacion
+                                ON indi.indicador = tempInf.indicatorName
+                                ),
+                                (
+                                SELECT top 1 id_fecha FROM [PROYECTO1].fecha as fe
+                                INNER JOIN [PROYECTO1].temporalInflacion
+                                ON fe.year_field like '{x}%'
+                                ),
+                                (
+                                tempInf.A{x}
+                                )
+                                from [PROYECTO1].temporalInflacion as tempInf'''.format(x=x))
+
         cursorSqlServer.close()
         myFile.close()
         print("\x1b[1;33m"+"SE HAN CARGADO LOS DATOS EXITOSAMENTE :D")
