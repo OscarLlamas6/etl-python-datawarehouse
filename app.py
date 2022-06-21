@@ -98,7 +98,9 @@ def selectQuery():
         queriesMenu()        
         keyInput = input("\x1b[1;37m"+"")    
         if keyInput == "1":
-            print("hola")
+            Query1()
+        if keyInput == "2":
+            Query2()
         if keyInput == "13" or keyInput.lower() == "exit":
             break            
                 
@@ -114,8 +116,8 @@ def menu():
     
 def queriesMenu():
     print("\x1b[1;34m"+"\n-------------------------- ELIGE UNA CONSULTA --------------------------")
-    print("\x1b[1;35m"+"1) CONSULTA 1")
-    print("\x1b[1;32m"+"2) CONSULTA 2") 
+    print("\x1b[1;35m"+"1) TOP 10 CON MEJOR PIB EN 2021")
+    print("\x1b[1;32m"+"2) TOP 10 CON MENOR PIB EN 2018") 
     print("\x1b[1;33m"+"3) CONSULTA 3")
     print("\x1b[1;31m"+"4) CONSULTA 4")
     print("\x1b[1;37m"+"5) CONSULTA 5")
@@ -402,5 +404,76 @@ def extractData():
         print(e)
         print('Error al cargar informacion :(')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
-    
+
+def Query1():
+    try:
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #1", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT T.year_field AS 'year', P.pais, T.valor FROM (
+                    SELECT F.year_field, R.id_pais, R.valor FROM ( 
+                    SELECT IP.id_pais, IP.valor, IP.id_fecha
+                        FROM [PROYECTO1].indicadorpais AS IP
+                        INNER JOIN [PROYECTO1].indicador AS I
+                        ON IP.id_indicador = I.id_indicador
+                        WHERE I.indicador LIKE 'Crecimiento del PIB%') AS R
+                    INNER JOIN [PROYECTO1].fecha AS F ON R.id_fecha = F.id_fecha
+                    WHERE F.year_field = 2020
+                    ORDER BY R.valor DESC
+                    OFFSET 0 ROWS
+                    FETCH NEXT 10 ROWS ONLY) AS T
+                    INNER JOIN [PROYECTO1].pais AS P
+                    ON T.id_pais = P.id_pais''')
+        myQueryFile = open("consulta1.txt", "w")
+        print("------------ CONSULTA 1 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 1 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...") 
+
+def Query2():
+    try:
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #2", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT T.year_field AS 'year', P.pais, T.valor FROM (
+                                SELECT F.year_field, R.id_pais, R.valor FROM ( SELECT IP.id_pais, IP.valor, IP.id_fecha
+                                    FROM [PROYECTO1].indicadorpais AS IP
+                                    INNER JOIN [PROYECTO1].indicador AS I
+                                    ON IP.id_indicador = I.id_indicador
+                                    WHERE I.indicador LIKE 'Crecimiento del PIB%') AS R
+                                INNER JOIN [PROYECTO1].fecha AS F ON R.id_fecha = F.id_fecha
+                                WHERE F.year_field = 2018
+                                ORDER BY R.valor ASC
+                                OFFSET 0 ROWS
+                                FETCH NEXT 10 ROWS ONLY) AS T
+                                INNER JOIN [PROYECTO1].pais AS P
+                                ON T.id_pais = P.id_pais''')
+        myQueryFile = open("consulta2.txt", "w")
+        print("------------ CONSULTA 2 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 2 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
 myApp = CLI()
