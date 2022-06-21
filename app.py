@@ -255,6 +255,8 @@ def cargarDatamartsNuevos():
         date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
         print(date_time + " - Cargando datos en Datamarts...", file=myFile)
 
+        cursorSqlServer.execute('USE [PROYECTO1]')
+
         for query in SCRIPTS_CARGA_DM_INFLACION:
             cursorSqlServer.execute(query)
         
