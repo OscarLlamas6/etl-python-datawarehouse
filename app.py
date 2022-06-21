@@ -79,13 +79,16 @@ class CLI():
                     extractData()
                 if keyInput == "2":
                     createModel()
+                if keyInput == "3":
+                    loadData()
+                if keyInput == "4":
+                    selectQuery()
                 if keyInput == "5" or keyInput.lower() == "exit":
                     print("\x1b[1;31m"+"\nHASTA LA PROXIMA :D")
                     break
         except Exception as Ex:
             print(Ex)
         
-
 def selectQuery():
     while(True):
         os.system('cls||clear')
@@ -96,7 +99,7 @@ def selectQuery():
         keyInput = input("\x1b[1;37m"+"")    
         if keyInput == "1":
             print("hola")
-        if keyInput == "11" or keyInput.lower() == "exit":
+        if keyInput == "13" or keyInput.lower() == "exit":
             break            
                 
 def menu():
@@ -104,6 +107,7 @@ def menu():
     print("\x1b[1;32m"+"1) INICIAR ETL")
     print("\x1b[1;31m"+"2) CREAR MODELO")
     print("\x1b[1;33m"+"3) CARGAR INFORMACION")
+    print("\x1b[1;35m"+"4) CONSULTAS")
     print("\x1b[1;36m"+"5) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
@@ -120,7 +124,9 @@ def queriesMenu():
     print("\x1b[1;33m"+"8) CONSULTA 8")
     print("\x1b[1;34m"+"9) CONSULTA 9")
     print("\x1b[1;31m"+"10) CONSULTA 10")
-    print("\x1b[1;36m"+"11) SALIR\n")
+    print("\x1b[1;32m"+"11) CONSULTA 11")
+    print("\x1b[1;35m"+"12) CONSULTA 12")
+    print("\x1b[1;36m"+"13) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
 
@@ -145,14 +151,14 @@ def createModel():
         cursorSqlServer.execute('DROP TABLE if exists [PROYECTO1].fecha')
         cursorSqlServer.execute('''CREATE TABLE  [PROYECTO1].indicador(
                                     id_indicador int not null identity(1,1),
-                                    indicador varchar(60),
-                                    codigo_indicador varchar(60),
+                                    indicador varchar(300),
+                                    codigo_indicador varchar(300),
                                     constraint pk_indicador primary key(id_indicador)
                                 )''')
         cursorSqlServer.execute('''CREATE TABLE [PROYECTO1].pais(
                                     id_pais int not null identity(1,1),
-                                    pais varchar(60),
-                                    codigo_pais varchar(60),
+                                    pais varchar(300),
+                                    codigo_pais varchar(300),
                                     constraint pk_pais primary key (id_pais)
                                 )''')
         cursorSqlServer.execute('''CREATE TABLE [PROYECTO1].fecha(
@@ -186,6 +192,35 @@ def createModel():
 def loadData():
     try:
         print("\x1b[1;34m"+"\n------------------------- CARGANDO INFORMACION -------------------------")
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('USE [master]')
+        cursorSqlServer.execute('USE [PROYECTO1]')
+        cursorSqlServer.execute('''INSERT INTO [PROYECTO1].pais (pais, codigo_pais)
+                                SELECT COUNTRIES.countryName, COUNTRIES.countryCode FROM (
+                                    SELECT countryName, countryCode FROM [PROYECTO1].temporalInflacion
+                                    UNION ALL
+                                    SELECT countryName, countryCode FROM [PROYECTO1].temporalPib
+                                ) AS COUNTRIES
+                                GROUP BY COUNTRIES.countryName, COUNTRIES.countryCode''')
+        cursorSqlServer.execute('''INSERT INTO [PROYECTO1].indicador (indicador, codigo_indicador)
+                                SELECT INDICATORS.indicatorName, INDICATORS.indicatorCode FROM (
+                                    SELECT indicatorName, indicatorCode FROM [PROYECTO1].temporalInflacion
+                                    UNION ALL
+                                    SELECT indicatorName, indicatorCode FROM [PROYECTO1].temporalPib
+                                ) AS INDICATORS
+                                GROUP BY INDICATORS.indicatorName, INDICATORS.indicatorCode''')
+        cursorSqlServer.execute('''INSERT INTO [PROYECTO1].fecha (year_field)
+                                SELECT YEARS.YEAR_FIELD FROM  (
+                                    SELECT  RIGHT(COLUMN_NAME, LEN(COLUMN_NAME) - 1) AS YEAR_FIELD
+                                    FROM INFORMATION_SCHEMA.COLUMNS
+                                    WHERE TABLE_NAME = 'temporalInflacion' AND COLUMN_NAME LIKE 'A%'
+                                    UNION  ALL
+                                    SELECT  RIGHT(COLUMN_NAME, LEN(COLUMN_NAME) - 1) AS COLUMN_NAME
+                                    FROM INFORMATION_SCHEMA.COLUMNS
+                                    WHERE TABLE_NAME = 'temporalPib' AND COLUMN_NAME LIKE 'A%'
+                                ) AS YEARS
+                                GROUP BY YEARS.YEAR_FIELD''')
+        cursorSqlServer.close()
         print("\x1b[1;33m"+"SE HAN CARGADO LOS DATOS EXITOSAMENTE :D")
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     except Exception as e: 
