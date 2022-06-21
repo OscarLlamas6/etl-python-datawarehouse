@@ -113,7 +113,7 @@ def menu():
     print("\x1b[1;32m"+"1) INICIAR ETL")
     print("\x1b[1;31m"+"2) CREAR MODELO")
     print("\x1b[1;33m"+"3) CARGAR INFORMACION")
-    print("\x1b[1;33m"+"4) CONSULTAS")
+    print("\x1b[1;34m"+"4) CONSULTAS")
     print("\x1b[1;35m"+"5) CREAR DATAMARTS")
     print("\x1b[1;36m"+"6) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
@@ -335,9 +335,10 @@ def loadData():
 def dropDatamarts():
     try:
         cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('USE [master]')
         cursorSqlServer.execute('USE [PROYECTO1]')
 
-        # Ahora se corren todos los scripts para borar el datamart  
+        # Ahora se corren todos los scripts para borrar el datamart  
         # y sus tablas inflacion, impacto_mundia y combinado
         # estos se encuentran cada uno en un arreglo de strings definido en el archivo
         # createTAbles.py y se ejecutaran justo en el orden en que fueron agregados
@@ -352,11 +353,11 @@ def dropDatamarts():
             cursorSqlServer.execute(query)
 
         cursorSqlServer.close()
-        print("\x1b[1;33m"+'Modelo eliminado :(')
+        print("\x1b[1;33m"+'Modelos Datamarts eliminados :(')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     except Exception as e: 
         print(e)
-        print('Error al cargar informacion :(')
+        print('Error al eliminar Datamarts :(')
         input("\x1b[1;31m"+"Presiona ENTER para continuar...") 
 
 def dropModel():
