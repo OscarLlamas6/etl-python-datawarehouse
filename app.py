@@ -116,6 +116,14 @@ def selectQuery():
             Query5()
         if keyInput == "6":
             Query6()
+        if keyInput == "7":
+            Query7()
+        if keyInput == "8":
+            Query8()
+        if keyInput == "9":
+            Query9()
+        if keyInput == "10":
+            Query10()
         if keyInput == "13" or keyInput.lower() == "exit":
             break            
                 
@@ -140,10 +148,10 @@ def queriesMenu():
     print("\x1b[1;31m"+"4) PAISES QUE TUVIERON UN PIB MENOR A 7 Y MAYOR A 0 EN 2010")
     print("\x1b[1;37m"+"5) PAISES QUE TUVIERON UNA INFLACION MAYOR A 6 EN 1976")
     print("\x1b[1;35m"+"6) PAISES QUE TUVIERON UNA INFLACION MENOR A 6 Y MAYOR A CERO EN 1985")
-    print("\x1b[1;32m"+"7) CONSULTA 7")
-    print("\x1b[1;33m"+"8) CONSULTA 8")
-    print("\x1b[1;34m"+"9) CONSULTA 9")
-    print("\x1b[1;31m"+"10) CONSULTA 10")
+    print("\x1b[1;32m"+"7) PAISES QUE TUVIERON UNA INFLACION MAYOR A 12 ENTRE 1969 Y 1975")
+    print("\x1b[1;33m"+"8) PAISES QUE TUVIERON UN PIB MAYOR A 15 ENTRE 1969 Y 1975")
+    print("\x1b[1;36m"+"9) PAISES CON INFLACION MAYOR A 12 Y MENOR A 20, PIB MENOR A 10 Y MAYOR A 0, ENTRE 2000 Y 2010")
+    print("\x1b[1;31m"+"10) PAISES CON PIB > INFLACION, PIB > 0 < INFLACION, ENTRE 1980 Y 1990")
     print("\x1b[1;32m"+"11) CONSULTA 11")
     print("\x1b[1;35m"+"12) CONSULTA 12")
     print()
@@ -776,6 +784,129 @@ def Query6():
         myQueryFile.close()
         myFile.close()
         print("\x1b[1;33m"+"Reporte de consulta 6 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
+def Query7():
+    try:
+        myFile = open("logs.txt", "a", encoding='utf-8')
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #7", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT PI.pais, RY.medida_inflacion, RY.anio FROM (
+                                SELECT RP.cod_pais, RP.medida_inflacion, YP.anio
+                                FROM [PROYECTO1].registro_inflacionpais_inf AS RP
+                                INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+                                ON RP.cod_anio = YP.id_anio
+                                WHERE YP.anio BETWEEN 1969 AND 1975 AND RP.medida_inflacion > 12) AS RY
+                            INNER JOIN [PROYECTO1].pais_im AS PI
+                            ON RY.cod_pais = PI.id_pais
+                            ORDER BY ry.anio, RY.medida_inflacion DESC''')
+        myQueryFile = open("consulta7.txt", "w")
+        print("------------ CONSULTA 7 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 7 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+        
+def Query8():
+    try:
+        myFile = open("logs.txt", "a", encoding='utf-8')
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #8", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT PI.pais, RY.medida_pib, RY.anio FROM (
+                                    SELECT RP.cod_pais, RP.medida_pib, YP.anio
+                                    FROM [PROYECTO1].registro_pibpais_im AS RP
+                                    INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+                                    ON RP.cod_anio = YP.id_anio
+                                    WHERE YP.anio BETWEEN 1969 AND 1975 AND RP.medida_pib > 15) AS RY
+                                INNER JOIN [PROYECTO1].pais_im AS PI
+                                ON RY.cod_pais = PI.id_pais
+                                ORDER BY RY.medida_pib DESC''')
+        myQueryFile = open("consulta8.txt", "w")
+        print("------------ CONSULTA 8 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 8 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
+def Query9():
+    try:
+        myFile = open("logs.txt", "a", encoding='utf-8')
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #9", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT PC.pais, EC.medida_inflacion, EC.medida_pib, YC.anio 
+                                    FROM [PROYECTO1].estado_pais_comb AS EC
+                                    INNER JOIN [PROYECTO1].anio_registrado_comb AS YC
+                                    ON EC.cod_anio = YC.id_anio
+                                    INNER JOIN [PROYECTO1].pais_comb AS PC
+                                    ON EC.cod_pais = PC.id_pais
+                                    WHERE YC.anio BETWEEN 2000 AND 2010
+                                    AND EC.medida_inflacion BETWEEN 12 and 20 AND EC.medida_pib BETWEEN 0 AND 10''')
+        myQueryFile = open("consulta9.txt", "w")
+        print("------------ CONSULTA 9 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 9 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
+def Query10():
+    try:
+        myFile = open("logs.txt", "a", encoding='utf-8')
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #10", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT PC.pais, EC.medida_inflacion, EC.medida_pib, YC.anio 
+                                FROM [PROYECTO1].estado_pais_comb AS EC
+                                INNER JOIN [PROYECTO1].anio_registrado_comb AS YC
+                                ON EC.cod_anio = YC.id_anio
+                                INNER JOIN [PROYECTO1].pais_comb AS PC
+                                ON EC.cod_pais = PC.id_pais
+                                WHERE YC.anio BETWEEN 1980 AND 1990
+                                AND EC.medida_inflacion < EC.medida_pib AND EC.medida_pib > 0 
+                                AND EC.medida_inflacion > 0''')
+        myQueryFile = open("consulta10.txt", "w")
+        print("------------ CONSULTA 10 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 10 generado exitosamente :D")
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     except Exception as e: 
         print(e)
