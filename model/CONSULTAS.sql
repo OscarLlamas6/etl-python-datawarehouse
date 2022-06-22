@@ -130,3 +130,30 @@ ON EC.cod_pais = PC.id_pais
 WHERE YC.anio BETWEEN 1980 AND 1990
 AND EC.medida_inflacion < EC.medida_pib AND EC.medida_pib > 0 
 AND EC.medida_inflacion > 0
+
+
+/* CONSULTA 11: TOP 6 PAISES CON MAYOR PIB DE TODOS DE LOS TIEMPOS (PROMEDIO)*/
+
+SELECT PC.pais, avg(EC.medida_pib) AS 'PIB Promedio (1960-2021)'
+FROM [PROYECTO1].estado_pais_comb AS EC
+INNER JOIN [PROYECTO1].anio_registrado_comb AS YC
+ON EC.cod_anio = YC.id_anio
+INNER JOIN [PROYECTO1].pais_comb AS PC
+ON EC.cod_pais = PC.id_pais
+GROUP BY PC.pais
+ORDER BY 'PIB Promedio (1960-2021)' DESC
+OFFSET 0 ROWS
+FETCH NEXT 6 ROWS ONLY
+
+/* CONSULTA 12: TOP 6 PAISES CON MAYOR INFLACION DE TODOS DE LOS TIEMPOS (PROMEDIO)*/
+
+SELECT PC.pais, avg(EC.medida_inflacion) AS 'Inflacion Promedio (1960-2021)'
+FROM [PROYECTO1].estado_pais_comb AS EC
+INNER JOIN [PROYECTO1].anio_registrado_comb AS YC
+ON EC.cod_anio = YC.id_anio
+INNER JOIN [PROYECTO1].pais_comb AS PC
+ON EC.cod_pais = PC.id_pais
+GROUP BY PC.pais
+ORDER BY 'Inflacion Promedio (1960-2021)' DESC
+OFFSET 0 ROWS
+FETCH NEXT 12 ROWS ONLY
