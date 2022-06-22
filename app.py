@@ -84,12 +84,12 @@ class CLI():
                 if keyInput == "3":
                     loadData()
                 if keyInput == "4":
-                    selectQuery()
-                if keyInput == "5":
                     dropDatamarts()
                     crearDatamarts()
-                if keyInput == "6":
+                if keyInput == "5":
                     cargarDatamartsNuevos()
+                if keyInput == "6":
+                    selectQuery()
                 if keyInput == "7" or keyInput.lower() == "exit":
                     print("\x1b[1;31m"+"\nHASTA LA PROXIMA :D")
                     break
@@ -108,6 +108,14 @@ def selectQuery():
             Query1()
         if keyInput == "2":
             Query2()
+        if keyInput == "3":
+            Query3()
+        if keyInput == "4":
+            Query4()
+        if keyInput == "5":
+            Query5()
+        if keyInput == "6":
+            Query6()
         if keyInput == "13" or keyInput.lower() == "exit":
             break            
                 
@@ -115,10 +123,11 @@ def menu():
     print("\x1b[1;34m"+"\n---------------------------- ELIGE UNA OPCION ----------------------------")
     print("\x1b[1;32m"+"1) INICIAR ETL")
     print("\x1b[1;31m"+"2) CREAR MODELO")
-    print("\x1b[1;33m"+"3) CARGAR INFORMACION")
-    print("\x1b[1;34m"+"4) CONSULTAS")
-    print("\x1b[1;35m"+"5) CREAR DATAMARTS")
-    print("\x1b[1;37m"+"6) CARGAR DATAMARTS")
+    print("\x1b[1;33m"+"3) CARGAR INFORMACION") 
+    print("\x1b[1;35m"+"4) CREAR DATAMARTS")
+    print("\x1b[1;37m"+"5) CARGAR DATAMARTS")
+    print("\x1b[1;34m"+"6) CONSULTAS")
+    print()
     print("\x1b[1;36m"+"7) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
@@ -127,16 +136,17 @@ def queriesMenu():
     print("\x1b[1;34m"+"\n-------------------------- ELIGE UNA CONSULTA --------------------------")
     print("\x1b[1;35m"+"1) TOP 10 CON MEJOR PIB EN 2021")
     print("\x1b[1;32m"+"2) TOP 10 CON MENOR PIB EN 2018") 
-    print("\x1b[1;33m"+"3) CONSULTA 3")
-    print("\x1b[1;31m"+"4) CONSULTA 4")
-    print("\x1b[1;37m"+"5) CONSULTA 5")
-    print("\x1b[1;35m"+"6) CONSULTA 6")
+    print("\x1b[1;33m"+"3) PAISES QUE TUVIERON UN PIB MAYOR A 10 EN 2005")
+    print("\x1b[1;31m"+"4) PAISES QUE TUVIERON UN PIB MENOR A 7 Y MAYOR A 0 EN 2010")
+    print("\x1b[1;37m"+"5) PAISES QUE TUVIERON UNA INFLACION MAYOR A 6 EN 1976")
+    print("\x1b[1;35m"+"6) PAISES QUE TUVIERON UNA INFLACION MENOR A 6 Y MAYOR A CERO EN 1985")
     print("\x1b[1;32m"+"7) CONSULTA 7")
     print("\x1b[1;33m"+"8) CONSULTA 8")
     print("\x1b[1;34m"+"9) CONSULTA 9")
     print("\x1b[1;31m"+"10) CONSULTA 10")
     print("\x1b[1;32m"+"11) CONSULTA 11")
     print("\x1b[1;35m"+"12) CONSULTA 12")
+    print()
     print("\x1b[1;36m"+"13) SALIR\n")
     print("\x1b[1;32m"+"USAC ", end='')
     print("\x1b[1;33m"+"> ", end='')
@@ -642,6 +652,130 @@ def Query2():
         myQueryFile.close()
         myFile.close()
         print("\x1b[1;33m"+"Reporte de consulta 2 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
+def Query3():
+    try:
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #3", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT PI.pais, RY.medida_pib, RY.anio FROM (
+                                    SELECT RP.cod_pais, RP.medida_pib, YP.anio
+                                    FROM [PROYECTO1].registro_pibpais_im AS RP
+                                    INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+                                    ON RP.cod_anio = YP.id_anio
+                                    WHERE YP.anio = 2005 AND RP.medida_pib > 10) AS RY
+                                INNER JOIN [PROYECTO1].pais_im AS PI
+                                ON RY.cod_pais = PI.id_pais
+                                ORDER BY RY.medida_pib DESC''')
+        myQueryFile = open("consulta3.txt", "w")
+        print("------------ CONSULTA 3 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 3 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
+def Query4():
+    try:
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #4", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT PI.pais, RY.medida_pib, RY.anio FROM (
+                                SELECT RP.cod_pais, RP.medida_pib, YP.anio
+                                FROM [PROYECTO1].registro_pibpais_im AS RP
+                                INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+                                ON RP.cod_anio = YP.id_anio
+                                WHERE YP.anio = 2010 AND RP.medida_pib < 10 AND RP.medida_pib > 0) AS RY
+                            INNER JOIN [PROYECTO1].pais_im AS PI
+                            ON RY.cod_pais = PI.id_pais
+                            ORDER BY RY.medida_pib DESC''')
+        myQueryFile = open("consulta4.txt", "w")
+        print("------------ CONSULTA 4 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 4 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
+def Query5():
+    try:
+        myFile = open("logs.txt", "a")
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #5", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT PI.pais, RY.medida_inflacion, RY.anio FROM (
+                                SELECT RP.cod_pais, RP.medida_inflacion, YP.anio
+                                FROM [PROYECTO1].registro_inflacionpais_inf AS RP
+                                INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+                                ON RP.cod_anio = YP.id_anio
+                                WHERE YP.anio = 1976 AND RP.medida_inflacion > 6) AS RY
+                            INNER JOIN [PROYECTO1].pais_im AS PI
+                            ON RY.cod_pais = PI.id_pais
+                            ORDER BY RY.medida_inflacion DESC''')
+        myQueryFile = open("consulta5.txt", "w")
+        print("------------ CONSULTA 5 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 5 generado exitosamente :D")
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+    except Exception as e: 
+        print(e)
+        print('Error al generar reporte :(')
+        input("\x1b[1;31m"+"Presiona ENTER para continuar...")
+
+def Query6():
+    try:
+        myFile = open("logs.txt", "a", encoding='utf-8')
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")   
+        print(date_time + " - Generando reporte de consulta #6", file=myFile) 
+        cursorSqlServer = sqlServerDB.cursor()
+        cursorSqlServer.execute('''SELECT PI.pais, RY.medida_inflacion, RY.anio FROM (
+                                SELECT RP.cod_pais, RP.medida_inflacion, YP.anio
+                                FROM [PROYECTO1].registro_inflacionpais_inf AS RP
+                                INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+                                ON RP.cod_anio = YP.id_anio
+                                WHERE YP.anio = 1985 AND RP.medida_inflacion < 6 AND RP.medida_inflacion > 0) AS RY
+                            INNER JOIN [PROYECTO1].pais_im AS PI
+                            ON RY.cod_pais = PI.id_pais
+                            ORDER BY RY.medida_inflacion DESC''')
+        myQueryFile = open("consulta6.txt", "w")
+        print("------------ CONSULTA 6 ------------", file=myQueryFile)
+        print(file=myQueryFile)
+        for row in cursorSqlServer:
+            print(row, file=myQueryFile)
+        cursorSqlServer.close() 
+        myQueryFile.close()
+        myFile.close()
+        print("\x1b[1;33m"+"Reporte de consulta 6 generado exitosamente :D")
         input("\x1b[1;31m"+"Presiona ENTER para continuar...")
     except Exception as e: 
         print(e)

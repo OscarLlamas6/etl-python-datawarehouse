@@ -38,14 +38,12 @@ SCRIPTS_CARGA_DM_INFLACION = [CARGAR_TABLA_DM_INFLACION_PAIS,CARGAR_TABLA_DM_INF
 CARGAR_TABLA_DM_IMPACTO_PAIS = ("""
 insert into [PROYECTO1].pais_im(pais) (
     select distinct pais from [PROYECTO1].pais
-);
-""")
+);""")
 
 CARGAR_TABLA_DM_IMPACTO_ANIO = ("""
 insert into [PROYECTO1].anio_registrado_im(anio) (
     select distinct year_field from [PROYECTO1].fecha
-);
-""")
+);""")
 
 CARGAR_TABLA_DM_IMPACTO_REGISTROPIB = ("""
 insert into [PROYECTO1].registro_pibpais_im(cod_pais, cod_anio, medida_pib) (

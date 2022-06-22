@@ -32,3 +32,51 @@ OFFSET 0 ROWS
 FETCH NEXT 10 ROWS ONLY) AS T
 INNER JOIN [PROYECTO1].pais AS P
 ON T.id_pais = P.id_pais
+
+/* CONSULTA 3: PAISES QUE TUVIERON UN PIB MAYOR A 10 EN 2005 */
+
+SELECT PI.pais, RY.medida_pib, RY.anio FROM (
+    SELECT RP.cod_pais, RP.medida_pib, YP.anio
+    FROM [PROYECTO1].registro_pibpais_im AS RP
+    INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+    ON RP.cod_anio = YP.id_anio
+    WHERE YP.anio = 2005 AND RP.medida_pib > 10) AS RY
+INNER JOIN [PROYECTO1].pais_im AS PI
+ON RY.cod_pais = PI.id_pais
+ORDER BY RY.medida_pib DESC
+
+/* CONSULTA 4: PAISES QUE TUVIERON UN PIB MENOR A 7 Y MAYOR 0 EN 2010 */
+
+SELECT PI.pais, RY.medida_pib, RY.anio FROM (
+    SELECT RP.cod_pais, RP.medida_pib, YP.anio
+    FROM [PROYECTO1].registro_pibpais_im AS RP
+    INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+    ON RP.cod_anio = YP.id_anio
+    WHERE YP.anio = 2010 AND RP.medida_pib < 10 AND RP.medida_pib > 0) AS RY
+INNER JOIN [PROYECTO1].pais_im AS PI
+ON RY.cod_pais = PI.id_pais
+ORDER BY RY.medida_pib DESC
+
+/* CONSULTA 5: PAISES QUE TUVIERON UNA INFLACION MAYOR A 6 EN 1976 */
+
+SELECT PI.pais, RY.medida_inflacion, RY.anio FROM (
+    SELECT RP.cod_pais, RP.medida_inflacion, YP.anio
+    FROM [PROYECTO1].registro_inflacionpais_inf AS RP
+    INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+    ON RP.cod_anio = YP.id_anio
+    WHERE YP.anio = 1976 AND RP.medida_inflacion > 6) AS RY
+INNER JOIN [PROYECTO1].pais_im AS PI
+ON RY.cod_pais = PI.id_pais
+ORDER BY RY.medida_inflacion DESC
+
+/* CONSULTA 6: PAISES QUE TUVIERON UNA INFLACION MENOR A 6 Y MAYOR A CERO EN 1985 */
+
+SELECT PI.pais, RY.medida_inflacion, RY.anio FROM (
+    SELECT RP.cod_pais, RP.medida_inflacion, YP.anio
+    FROM [PROYECTO1].registro_inflacionpais_inf AS RP
+    INNER JOIN [PROYECTO1].anio_registrado_im AS YP
+    ON RP.cod_anio = YP.id_anio
+    WHERE YP.anio = 1985 AND RP.medida_inflacion < 6 AND RP.medida_inflacion > 0) AS RY
+INNER JOIN [PROYECTO1].pais_im AS PI
+ON RY.cod_pais = PI.id_pais
+ORDER BY RY.medida_inflacion DESC
