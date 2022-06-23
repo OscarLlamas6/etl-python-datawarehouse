@@ -1,0 +1,27 @@
+------------ LOGS PROYECTO 1 FASE 1 | SEMI2-GRUPO1 ------------
+
+06/23/2022, 11:50:56 - Creando modelo en MSSQL Server
+06/23/2022, 11:51:00 - Cargando información a modelo en MSSQL Server
+06/23/2022, 11:51:10 - Eliminando Datamarts en MSSQL Server
+06/23/2022, 11:51:11 - Creando Datamarts...
+06/23/2022, 11:51:11 - Datamart Inflacion creado exitosamente...
+06/23/2022, 11:51:11 - Datamart Impacto_Mundial creado exitosamente...
+06/23/2022, 11:51:11 - Datamart Combinado creado exitosamente...
+06/23/2022, 11:51:11 - Datamarts creados con exito!
+06/23/2022, 11:51:14 - Cargando datos en Datamarts...
+06/23/2022, 11:51:14 - Datos de Datamart: Inflacion, cargados con exito
+06/23/2022, 11:51:14 - Datos de Datamart: Impacto_Mundial, cargados con exito
+06/23/2022, 11:51:14 - Datos de Datamart: Combinado, cargados con exito
+06/23/2022, 11:51:14 - Datamarts cargados con exito!
+06/23/2022, 11:51:28 - Generando reporte de consulta #1
+06/23/2022, 11:51:44 - Generando reporte de consulta #2
+06/23/2022, 11:51:46 - Generando reporte de consulta #3
+06/23/2022, 11:51:48 - Generando reporte de consulta #4
+06/23/2022, 11:51:51 - Generando reporte de consulta #5
+06/23/2022, 11:51:53 - Generando reporte de consulta #6
+06/23/2022, 11:51:54 - Generando reporte de consulta #7
+06/23/2022, 11:51:56 - Generando reporte de consulta #8
+06/23/2022, 11:52:00 - Generando reporte de consulta #9
+06/23/2022, 11:52:02 - Generando reporte de consulta #10
+06/23/2022, 11:52:05 - Generando reporte de consulta #11
+06/23/2022, 11:52:12 - Generando reporte de consulta #12

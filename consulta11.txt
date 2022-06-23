@@ -1,0 +1,8 @@
+------------ CONSULTA 11 ------------
+
+('Guinea Ecuatorial', 8.821757144852583)
+('China', 7.808913360377753)
+('Botswana', 7.563061332358588)
+('Omán', 7.251747515580368)
+('Corea, República de', 7.002515564050556)
+('Asia oriental y el Pacífico (BIRF y la AIF)', 6.914325821045479)
